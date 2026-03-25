@@ -42,24 +42,20 @@ function getAcceptWindow(scheduledTimeNs: bigint): {
   label: string;
 } {
   const scheduledTimeMs = Number(scheduledTimeNs / BigInt(1_000_000));
-  const diff = scheduledTimeMs - Date.now();
-  const TWO_MIN_MS = 2 * 60 * 1000;
+  const diff = scheduledTimeMs - Date.now(); // positive = future, negative = past
+  const TEN_MIN_MS = 10 * 60 * 1000;
 
-  if (Math.abs(diff) <= TWO_MIN_MS) {
+  // Allow accept if within 10 minutes before OR any time after scheduled time
+  if (diff <= TEN_MIN_MS) {
     return { canAccept: true, label: "Accept" };
   }
 
-  if (diff > TWO_MIN_MS) {
-    // Future — show countdown
-    const totalSec = Math.floor((diff - TWO_MIN_MS) / 1000);
-    const m = Math.floor(totalSec / 60);
-    const s = totalSec % 60;
-    const label = m > 0 ? `Opens in ${m}m ${s}s` : `Opens in ${s}s`;
-    return { canAccept: false, label };
-  }
-
-  // More than 2 min past
-  return { canAccept: false, label: "Window closed" };
+  // Still too early — show countdown until the 10-min window opens
+  const totalSec = Math.floor((diff - TEN_MIN_MS) / 1000);
+  const m = Math.floor(totalSec / 60);
+  const s = totalSec % 60;
+  const label = m > 0 ? `Opens in ${m}m ${s}s` : `Opens in ${s}s`;
+  return { canAccept: false, label };
 }
 
 export function DriverDashboard() {
