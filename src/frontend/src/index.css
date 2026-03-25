@@ -1,0 +1,113 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fraunces:wght@400;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.75rem;
+
+    /* FarmHaul Green/Earthy Palette */
+    --background: 0.985 0.008 88;
+    --foreground: 0.2 0.025 80;
+
+    --card: 0.995 0.005 88;
+    --card-foreground: 0.2 0.025 80;
+
+    --popover: 0.995 0.005 88;
+    --popover-foreground: 0.2 0.025 80;
+
+    /* Primary: Forest Green */
+    --primary: 0.52 0.165 145;
+    --primary-foreground: 0.98 0 0;
+
+    /* Secondary: Light sage */
+    --secondary: 0.93 0.04 140;
+    --secondary-foreground: 0.35 0.1 145;
+
+    --muted: 0.94 0.015 88;
+    --muted-foreground: 0.52 0.025 80;
+
+    /* Accent: Golden amber/earthy */
+    --accent: 0.88 0.12 75;
+    --accent-foreground: 0.25 0.06 70;
+
+    --destructive: 0.577 0.245 27.325;
+    --destructive-foreground: 0.985 0 0;
+
+    --border: 0.88 0.02 88;
+    --input: 0.9 0.02 88;
+    --ring: 0.52 0.165 145;
+
+    --chart-1: 0.52 0.165 145;
+    --chart-2: 0.65 0.18 75;
+    --chart-3: 0.55 0.15 200;
+    --chart-4: 0.72 0.15 50;
+    --chart-5: 0.62 0.14 260;
+
+    --sidebar: 0.97 0.01 88;
+    --sidebar-foreground: 0.2 0.025 80;
+    --sidebar-primary: 0.52 0.165 145;
+    --sidebar-primary-foreground: 0.98 0 0;
+    --sidebar-accent: 0.93 0.04 140;
+    --sidebar-accent-foreground: 0.35 0.1 145;
+    --sidebar-border: 0.88 0.02 88;
+    --sidebar-ring: 0.52 0.165 145;
+
+    /* Status colors */
+    --status-pending: 0.75 0.17 75;
+    --status-accepted: 0.55 0.18 240;
+    --status-picked-up: 0.65 0.2 55;
+    --status-delivered: 0.52 0.165 145;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body;
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+  }
+}
+
+@layer utilities {
+  .status-pending {
+    background-color: oklch(var(--status-pending) / 0.15);
+    color: oklch(var(--status-pending));
+    border-color: oklch(var(--status-pending) / 0.3);
+  }
+  .status-accepted {
+    background-color: oklch(var(--status-accepted) / 0.12);
+    color: oklch(var(--status-accepted));
+    border-color: oklch(var(--status-accepted) / 0.3);
+  }
+  .status-pickedup {
+    background-color: oklch(var(--status-picked-up) / 0.15);
+    color: oklch(var(--status-picked-up));
+    border-color: oklch(var(--status-picked-up) / 0.3);
+  }
+  .status-delivered {
+    background-color: oklch(var(--status-delivered) / 0.15);
+    color: oklch(var(--status-delivered));
+    border-color: oklch(var(--status-delivered) / 0.3);
+  }
+  .hero-gradient {
+    background: linear-gradient(
+      135deg,
+      oklch(0.22 0.08 145) 0%,
+      oklch(0.35 0.12 145) 40%,
+      oklch(0.42 0.14 155) 100%
+    );
+  }
+  .card-hover {
+    @apply transition-all duration-200 hover:shadow-md hover:-translate-y-0.5;
+  }
+}
