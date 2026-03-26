@@ -8,10 +8,8 @@ import {
 } from "@tanstack/react-router";
 import { Footer } from "./components/Footer";
 import { Navbar } from "./components/Navbar";
-import { VoiceBot } from "./components/VoiceBot";
 import { AuthProvider } from "./context/AuthContext";
 import { LangProvider } from "./context/LangContext";
-import { VoiceCommandProvider } from "./context/VoiceCommandContext";
 import { DriverDashboard } from "./pages/DriverDashboard";
 import { DriverPortfolio } from "./pages/DriverPortfolio";
 import { FarmerDashboard } from "./pages/FarmerDashboard";
@@ -112,11 +110,8 @@ export default function App() {
   return (
     <LangProvider>
       <AuthProvider>
-        <VoiceCommandProvider>
-          <RouterProvider router={router} />
-          <Toaster richColors position="top-right" />
-          <VoiceBot />
-        </VoiceCommandProvider>
+        <RouterProvider router={router} />
+        <Toaster richColors position="top-right" />
       </AuthProvider>
     </LangProvider>
   );

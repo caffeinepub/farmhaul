@@ -22,13 +22,12 @@ import {
   Trash2,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { RequestStatus } from "../backend.d";
 import { StatusBadge } from "../components/StatusBadge";
 import { useAuth } from "../context/AuthContext";
 import { useLang } from "../context/LangContext";
-import { useVoiceCommand } from "../context/VoiceCommandContext";
 import {
   useCreateTransportRequest,
   useDeleteRequest,
@@ -51,7 +50,6 @@ export function FarmerDashboard() {
   const { data: myRequests, isLoading } = useGetMyRequests();
   const createRequest = useCreateTransportRequest();
   const deleteRequest = useDeleteRequest();
-  const { registerFormFillers } = useVoiceCommand();
 
   const [cropType, setCropType] = useState("");
   const [quantity, setQuantity] = useState("");
@@ -59,12 +57,6 @@ export function FarmerDashboard() {
   const [drop, setDrop] = useState("");
   const [time, setTime] = useState("");
   const [locating, setLocating] = useState(false);
-
-  // Register form fillers with voice bot when this page is mounted
-  useEffect(() => {
-    registerFormFillers({ setCropType, setQuantity, setPickup, setDrop });
-    return () => registerFormFillers(null);
-  }, [registerFormFillers]);
 
   const handleUseMyLocation = () => {
     if (!navigator.geolocation) {
