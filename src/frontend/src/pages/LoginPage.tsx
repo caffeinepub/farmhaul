@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Leaf, Loader2, ShieldCheck, Tractor, Truck } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
@@ -25,9 +25,14 @@ export function LoginPage() {
   const { refreshProfile } = useAuth();
   const { identity, login, isLoggingIn } = useInternetIdentity();
   const navigate = useNavigate();
+  const search = useSearch({ strict: false }) as { intent?: string };
+
+  const intentRole =
+    search?.intent === "driver" ? UserRole.driver : UserRole.farmer;
+  const intentPath = search?.intent === "driver" ? "/driver" : "/farmer";
 
   const [name, setName] = useState("");
-  const [role, setRole] = useState<UserRole>(UserRole.farmer);
+  const [role, setRole] = useState<UserRole>(intentRole);
   const [loading, setLoading] = useState(false);
 
   const isAuthenticated = !!identity && !identity.getPrincipal().isAnonymous();
@@ -51,7 +56,7 @@ export function LoginPage() {
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       if (msg.includes("already registered")) {
-        // Fetch the actual stored profile to navigate to the correct dashboard
+        // Fetch the actual stored profile and redirect to intent destination
         try {
           const existingProfile = await actor.getCallerUserProfile();
           await refreshProfile();
@@ -62,7 +67,7 @@ export function LoginPage() {
           }
         } catch {
           await refreshProfile();
-          navigate({ to: "/farmer" });
+          navigate({ to: intentPath });
         }
       } else {
         toast.error("Registration failed. Please try again.");
@@ -87,7 +92,11 @@ export function LoginPage() {
             <Leaf className="w-8 h-8 text-primary-foreground" />
           </div>
           <h1 className="font-display text-2xl font-bold text-foreground">
-            {t("auth_title")}
+            {search?.intent === "driver"
+              ? "Join as a Driver"
+              : search?.intent === "farmer"
+                ? "Request a Pickup"
+                : t("auth_title")}
           </h1>
           <p className="text-muted-foreground mt-1">{t("auth_subtitle")}</p>
         </div>

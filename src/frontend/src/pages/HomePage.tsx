@@ -12,7 +12,6 @@ import {
   Zap,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { UserRole } from "../backend.d";
 import { useAuth } from "../context/AuthContext";
 import { useLang } from "../context/LangContext";
 import { useGetStats } from "../hooks/useQueries";
@@ -49,16 +48,18 @@ export function HomePage() {
 
   const handleFarmerCTA = () => {
     if (profile) {
-      navigate({
-        to: profile.role === UserRole.farmer ? "/farmer" : "/driver",
-      });
+      navigate({ to: "/farmer" });
     } else {
-      navigate({ to: "/login" });
+      navigate({ to: "/login", search: { intent: "farmer" } });
     }
   };
 
   const handleDriverCTA = () => {
-    navigate({ to: "/login" });
+    if (profile) {
+      navigate({ to: "/driver" });
+    } else {
+      navigate({ to: "/login", search: { intent: "driver" } });
+    }
   };
 
   return (
