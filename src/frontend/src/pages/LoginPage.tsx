@@ -21,7 +21,7 @@ import { useInternetIdentity } from "../hooks/useInternetIdentity";
 
 export function LoginPage() {
   const { t } = useLang();
-  const { actor } = useActor();
+  const { actor, isFetching: actorLoading } = useActor();
   const { refreshProfile } = useAuth();
   const { identity, login, isLoggingIn } = useInternetIdentity();
   const navigate = useNavigate();
@@ -133,6 +133,12 @@ export function LoginPage() {
               <CardDescription>{t("auth_subtitle")}</CardDescription>
             </CardHeader>
             <CardContent>
+              {actorLoading && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 rounded-lg px-3 py-2 mb-4">
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  Securing your connection...
+                </div>
+              )}
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-1.5">
                   <Label htmlFor="name">{t("auth_name_label")}</Label>
@@ -141,7 +147,7 @@ export function LoginPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder={t("auth_name_placeholder")}
-                    disabled={loading}
+                    disabled={loading || actorLoading}
                     data-ocid="login.input"
                   />
                 </div>
@@ -189,10 +195,15 @@ export function LoginPage() {
                 <Button
                   type="submit"
                   className="w-full h-11 font-semibold"
-                  disabled={loading}
+                  disabled={loading || actorLoading}
                   data-ocid="login.submit_button"
                 >
-                  {loading ? (
+                  {actorLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Preparing...
+                    </>
+                  ) : loading ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       {t("auth_logging_in")}

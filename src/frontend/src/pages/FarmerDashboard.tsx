@@ -116,8 +116,9 @@ export function FarmerDashboard() {
       setPickup("");
       setDrop("");
       setTime("");
-    } catch {
-      toast.error("Failed to create request. Please try again.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      toast.error(`Failed to create request: ${msg}`);
     }
   };
 
@@ -126,8 +127,9 @@ export function FarmerDashboard() {
     try {
       await deleteRequest.mutateAsync(requestId);
       toast.success("Request deleted");
-    } catch {
-      toast.error("Failed to delete request.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      toast.error(`Could not delete request: ${msg}`);
     }
   };
 

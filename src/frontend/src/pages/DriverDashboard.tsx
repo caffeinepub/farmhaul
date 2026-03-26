@@ -80,8 +80,17 @@ export function DriverDashboard() {
     try {
       await acceptRequest.mutateAsync(requestId);
       toast.success("Request accepted! 🚛");
-    } catch {
-      toast.error("Failed to accept request.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg.includes("Only drivers")) {
+        toast.error(
+          "Your account is registered as a farmer. Switch to driver role in Profile.",
+        );
+      } else if (msg.includes("Unauthorized")) {
+        toast.error("Not authorized. Please log out and log back in.");
+      } else {
+        toast.error(`Could not accept request: ${msg}`);
+      }
     }
   };
 

@@ -73,11 +73,15 @@ export function useGetMessages(requestId: bigint) {
 }
 
 export function useAcceptRequest() {
-  const { actor } = useActor();
+  const { actor, isFetching } = useActor();
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (requestId: bigint) => {
-      if (!actor) throw new Error("No actor");
+      if (isFetching)
+        throw new Error(
+          "Still connecting, please wait a moment and try again.",
+        );
+      if (!actor) throw new Error("Not connected");
       await actor.acceptRequest(requestId);
     },
     onSuccess: () => {
@@ -134,15 +138,16 @@ export function useCreateTransportRequest() {
 }
 
 export function useDeleteRequest() {
-  const { actor } = useActor();
+  const { actor, isFetching } = useActor();
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (requestId: bigint) => {
-      if (!actor) throw new Error("No actor");
-      // Cast to access deleteRequest which is defined in backend.d.ts
-      await (
-        actor as unknown as { deleteRequest(id: bigint): Promise<void> }
-      ).deleteRequest(requestId);
+      if (isFetching)
+        throw new Error(
+          "Still connecting, please wait a moment and try again.",
+        );
+      if (!actor) throw new Error("Not connected");
+      await actor.deleteRequest(requestId);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["myRequests"] });
