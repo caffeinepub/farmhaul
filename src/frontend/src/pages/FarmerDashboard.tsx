@@ -18,6 +18,7 @@ import {
   MapPin,
   Package,
   Plus,
+  Share2,
   Trash2,
 } from "lucide-react";
 import { motion } from "motion/react";
@@ -136,6 +137,19 @@ export function FarmerDashboard() {
     } catch {
       toast.error("Failed to delete request.");
     }
+  };
+
+  const handleShare = (e: React.MouseEvent, i: number) => {
+    e.stopPropagation();
+    const url = `${window.location.origin}/track/${i}`;
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        toast.success("Link copied! 📋");
+      })
+      .catch(() => {
+        toast.error("Could not copy link.");
+      });
   };
 
   if (!profile) {
@@ -366,6 +380,16 @@ export function FarmerDashboard() {
                           </div>
                           <div className="flex flex-col items-end gap-2">
                             <div className="flex items-center gap-1">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 text-muted-foreground hover:text-primary"
+                                onClick={(e) => handleShare(e, i)}
+                                title="Share tracking link"
+                                data-ocid={`farmer.secondary_button.${i + 1}`}
+                              >
+                                <Share2 className="w-3.5 h-3.5" />
+                              </Button>
                               {req.status === RequestStatus.pending && (
                                 <Button
                                   variant="ghost"

@@ -9,13 +9,13 @@ import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 import Time "mo:core/Time";
 import Text "mo:core/Text";
-import Migration "migration";
+
 
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
 // Use migration module on upgrade
-(with migration = Migration.run)
+
 actor {
   type UserRole = { #farmer; #driver };
   type RequestStatus = { #pending; #accepted; #pickedUp; #delivered };

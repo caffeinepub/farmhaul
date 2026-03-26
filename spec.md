@@ -1,32 +1,34 @@
-# FarmHaul - User Activity History System
+# FarmHaul – User Platform Upgrade
 
 ## Current State
-- Internet Identity authentication (ICP-native, no Google/email+OTP - not supported on this platform)
-- UserProfile: displayName + role (farmer/driver)
-- TransportRequests, chat messages, driver portfolio
-- Authorization mixin for role-based access
+- Internet Identity auth is fully implemented
+- Backend has user profiles, activity logging APIs, and transport request CRUD
+- UserDashboard exists at /dashboard with history, search, filter, favorites
+- Navbar has: Home, Dashboard, Track Order, Stats, My History (logged-in only)
+- All pages guard with login prompt
+- i18n: English, Hindi, Kannada
 
 ## Requested Changes (Diff)
 
 ### Add
-- `ActivityRecord` type in backend: id, userId (Principal), action (Text), inputData (Text), outputData (Text), timestamp, isFavorite (Bool)
-- Backend methods: `logActivity`, `getMyActivities`, `deleteActivity`, `toggleFavorite`, `clearAllActivities`
-- Activity is automatically logged on key user actions (create request, accept request, status update, etc.)
-- New `/dashboard` route with a unified user activity history page
-- Dashboard features: list history as cards/table, search by text, filter by favorite, delete individual entries, toggle bookmark/favorite, "re-run" button that pre-fills the farmer form with past request data
-- User profile section on dashboard showing name, role, principal ID, and join date
+- Profile Page at /profile: name, role, ICP identity, join date, inline name edit (updateDisplayName), role switch (switchRole + refreshProfile), loading/success states
+- Share button on FarmerDashboard request cards: copies /track/{index} URL to clipboard with toast
+- Profile nav link (User icon, logged-in only)
 
 ### Modify
-- Backend: existing `createTransportRequest`, `acceptRequest`, `updateRequestStatus` to also log activity records
-- App.tsx: add `/dashboard` route
-- Navbar: add Dashboard link for logged-in users
+- Navbar: add Profile link, rename "My History" to "My Dashboard", update mobile menu
+- UserDashboard: add Saved Outputs section (favorited activities), add quick-action buttons
+- translations.ts: add nav_profile and nav_my_dashboard in en/hi/kn
+- App.tsx: add /profile route
 
 ### Remove
-- Nothing removed
+- Nothing
 
 ## Implementation Plan
-1. Extend Motoko backend with ActivityRecord type and CRUD operations
-2. Auto-log activities on key actions in existing backend functions
-3. Add `/dashboard` page with profile card, search bar, activity history table/cards
-4. Implement search/filter, favorite toggle, delete, and re-run from history
-5. Link dashboard from Navbar for authenticated users
+1. Create ProfilePage.tsx
+2. Add /profile route in App.tsx
+3. Update Navbar.tsx - Profile link + rename My History
+4. Update translations.ts - new keys
+5. Update UserDashboard.tsx - Saved Outputs section + quick actions
+6. Update FarmerDashboard.tsx - share-link button on request cards
+7. Validate and build

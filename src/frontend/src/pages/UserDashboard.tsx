@@ -28,6 +28,7 @@ import {
   Trash2,
   Truck,
   User,
+  UserCog,
   XCircle,
 } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -329,6 +330,11 @@ export function UserDashboard() {
     a.action.toLowerCase().includes("request"),
   ).length;
 
+  const savedOutputs = useMemo(
+    () => activities.filter((a) => a.isFavorite),
+    [activities],
+  );
+
   const filtered = useMemo(() => {
     let list = activities;
     if (activeTab === "favorites") list = list.filter((a) => a.isFavorite);
@@ -400,10 +406,12 @@ export function UserDashboard() {
     });
   };
 
+  const rolePath = profile.role === UserRole.driver ? "/driver" : "/farmer";
+
   return (
     <main className="container mx-auto px-4 py-8 max-w-5xl">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-8">
+      <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
           <LayoutDashboard className="w-5 h-5 text-primary" />
         </div>
@@ -413,6 +421,28 @@ export function UserDashboard() {
             Activity history &amp; profile
           </p>
         </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => navigate({ to: rolePath })}
+          data-ocid="dashboard.secondary_button"
+        >
+          <LayoutDashboard className="w-3.5 h-3.5 mr-1.5" />
+          Go to Dashboard
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => navigate({ to: "/profile" })}
+          data-ocid="dashboard.secondary_button"
+        >
+          <UserCog className="w-3.5 h-3.5 mr-1.5" />
+          Edit Profile
+        </Button>
       </div>
 
       {/* Profile Card */}
@@ -596,6 +626,48 @@ export function UserDashboard() {
           </div>
         )}
       </div>
+
+      {/* Saved Outputs */}
+      {savedOutputs.length > 0 && (
+        <div className="mt-10 space-y-3">
+          <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <Star className="w-4 h-4 text-amber-500" fill="currentColor" />
+            Saved Outputs
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {savedOutputs.map((record) => (
+              <div
+                key={`saved-${record.id.toString()}`}
+                className="border-2 border-amber-200/60 bg-amber-50/40 dark:bg-amber-950/10 dark:border-amber-800/30 rounded-xl p-4"
+                data-ocid="dashboard.item.1"
+              >
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <span className="font-semibold text-sm text-foreground truncate">
+                    {humanizeAction(record.action)}
+                  </span>
+                  <span className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1 shrink-0">
+                    <Clock className="w-3 h-3" />
+                    {relativeTime(record.timestamp)}
+                  </span>
+                </div>
+                {record.inputData && (
+                  <p className="text-xs text-muted-foreground line-clamp-2">
+                    {record.inputData}
+                  </p>
+                )}
+                {record.outputData && (
+                  <Badge
+                    variant="outline"
+                    className="text-xs font-mono mt-2 border-amber-300 text-amber-700 dark:border-amber-700 dark:text-amber-300"
+                  >
+                    {record.outputData}
+                  </Badge>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Confirm Clear All Dialog */}
       <Dialog open={confirmClear} onOpenChange={setConfirmClear}>

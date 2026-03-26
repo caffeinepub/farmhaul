@@ -17,6 +17,7 @@ import { DriverPortfolio } from "./pages/DriverPortfolio";
 import { FarmerDashboard } from "./pages/FarmerDashboard";
 import { HomePage } from "./pages/HomePage";
 import { LoginPage } from "./pages/LoginPage";
+import { ProfilePage } from "./pages/ProfilePage";
 import { StatsDashboard } from "./pages/StatsDashboard";
 import { TrackOrder } from "./pages/TrackOrder";
 import { TrackRedirect } from "./pages/TrackRedirect";
@@ -80,6 +81,11 @@ const dashboardRoute = createRoute({
   path: "/dashboard",
   component: UserDashboard,
 });
+const profileRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/profile",
+  component: ProfilePage,
+});
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -91,6 +97,7 @@ const routeTree = rootRoute.addChildren([
   trackOrderRoute,
   statsRoute,
   dashboardRoute,
+  profileRoute,
 ]);
 
 export const router = createRouter({ routeTree });

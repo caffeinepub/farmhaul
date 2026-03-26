@@ -10,6 +10,8 @@ export const translations = {
     nav_login: "Login",
     nav_logout: "Logout",
     nav_lang: "हिंदी",
+    nav_my_dashboard: "My Dashboard",
+    nav_profile: "Profile",
 
     // Hero
     hero_tagline: "Transport your crops",
@@ -105,6 +107,8 @@ export const translations = {
     nav_login: "लॉगिन",
     nav_logout: "लॉगआउट",
     nav_lang: "ಕನ್ನಡ",
+    nav_my_dashboard: "मेरा डैशबोर्ड",
+    nav_profile: "प्रोफ़ाइल",
 
     // Hero
     hero_tagline: "फसल पहुँचाएं आसानी से",
@@ -200,6 +204,8 @@ export const translations = {
     nav_login: "ಲಾಗಿನ್",
     nav_logout: "ಲಾಗ್‌ಔಟ್",
     nav_lang: "English",
+    nav_my_dashboard: "ನನ್ನ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
+    nav_profile: "ಪ್ರೊಫೈಲ್",
 
     // Hero
     hero_tagline: "ಬೆಳೆ ಸಾಗಿಸಿ ಸುಲಭವಾಗಿ",
