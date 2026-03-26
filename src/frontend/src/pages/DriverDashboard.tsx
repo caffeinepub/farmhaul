@@ -13,7 +13,7 @@ import {
   Truck,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { RequestStatus } from "../backend.d";
 import { StatusBadge } from "../components/StatusBadge";
@@ -37,27 +37,6 @@ function formatTime(ns: bigint) {
   }
 }
 
-function getAcceptWindow(scheduledTimeNs: bigint): {
-  canAccept: boolean;
-  label: string;
-} {
-  const scheduledTimeMs = Number(scheduledTimeNs / BigInt(1_000_000));
-  const diff = scheduledTimeMs - Date.now(); // positive = future, negative = past
-  const TEN_MIN_MS = 10 * 60 * 1000;
-
-  // Allow accept if within 10 minutes before OR any time after scheduled time
-  if (diff <= TEN_MIN_MS) {
-    return { canAccept: true, label: "Accept" };
-  }
-
-  // Still too early — show countdown until the 10-min window opens
-  const totalSec = Math.floor((diff - TEN_MIN_MS) / 1000);
-  const m = Math.floor(totalSec / 60);
-  const s = totalSec % 60;
-  const label = m > 0 ? `Opens in ${m}m ${s}s` : `Opens in ${s}s`;
-  return { canAccept: false, label };
-}
-
 export function DriverDashboard() {
   const { t } = useLang();
   const { profile } = useAuth();
@@ -65,7 +44,6 @@ export function DriverDashboard() {
   const { data: allRequests, isLoading } = useGetAllRequests();
   const acceptRequest = useAcceptRequest();
   const updateStatus = useUpdateRequestStatus();
-  const [tick, setTick] = useState(0);
 
   const [driverLocation, setDriverLocation] = useState<{
     lat: number;
@@ -74,14 +52,6 @@ export function DriverDashboard() {
   } | null>(null);
   const [isTracking, setIsTracking] = useState(false);
   const watchIdRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    const interval = setInterval(() => setTick((t) => t + 1), 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // suppress unused warning — tick is used to trigger re-renders
-  void tick;
 
   if (!profile) {
     return (
@@ -245,83 +215,69 @@ export function DriverDashboard() {
               </Card>
             ) : (
               <div className="grid sm:grid-cols-2 gap-4">
-                {pendingRequests.map((req, i) => {
-                  const { canAccept, label } = getAcceptWindow(
-                    req.scheduledTime,
-                  );
-                  return (
-                    <motion.div
-                      key={`${req.cropType}-${req.timestamp.toString()}`}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.05 }}
-                      data-ocid={`driver.item.${i + 1}`}
-                    >
-                      <Card className="border-border shadow-card card-hover h-full">
-                        <CardHeader className="pb-3">
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <CardTitle className="text-base flex items-center gap-2">
-                                <Package className="w-4 h-4 text-primary" />
-                                {req.cropType}
-                              </CardTitle>
-                              <p className="text-sm text-muted-foreground mt-0.5">
-                                {req.quantityKg.toString()} kg
-                              </p>
-                            </div>
-                            <StatusBadge status={req.status} />
+                {pendingRequests.map((req, i) => (
+                  <motion.div
+                    key={`${req.cropType}-${req.timestamp.toString()}`}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    data-ocid={`driver.item.${i + 1}`}
+                  >
+                    <Card className="border-border shadow-card card-hover h-full">
+                      <CardHeader className="pb-3">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <CardTitle className="text-base flex items-center gap-2">
+                              <Package className="w-4 h-4 text-primary" />
+                              {req.cropType}
+                            </CardTitle>
+                            <p className="text-sm text-muted-foreground mt-0.5">
+                              {req.quantityKg.toString()} kg
+                            </p>
                           </div>
-                        </CardHeader>
-                        <CardContent className="space-y-2">
-                          <div className="flex items-center gap-2 text-sm">
-                            <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
-                            <span className="text-muted-foreground truncate">
-                              {req.pickupLocation}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <MapPin className="w-3.5 h-3.5 text-destructive shrink-0" />
-                            <span className="text-muted-foreground truncate">
-                              {req.dropLocation}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <Clock className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                            <span className="text-muted-foreground">
-                              {formatTime(req.scheduledTime)}
-                            </span>
-                          </div>
-                          <div className="pt-1 flex items-center justify-between">
-                            <span className="font-semibold text-primary">
-                              ₹{req.estimatedPrice.toString()}
-                            </span>
-                            <div className="flex flex-col items-end gap-1">
-                              <Button
-                                size="sm"
-                                onClick={() => handleAccept(req.id)}
-                                disabled={!canAccept || acceptRequest.isPending}
-                                title={label}
-                                data-ocid="driver.primary_button"
-                                className={!canAccept ? "opacity-60" : ""}
-                              >
-                                {acceptRequest.isPending ? (
-                                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                ) : (
-                                  t("driver_accept")
-                                )}
-                              </Button>
-                              {!canAccept && (
-                                <span className="text-xs text-muted-foreground font-medium">
-                                  {label}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  );
-                })}
+                          <StatusBadge status={req.status} />
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        <div className="flex items-center gap-2 text-sm">
+                          <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
+                          <span className="text-muted-foreground truncate">
+                            {req.pickupLocation}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <MapPin className="w-3.5 h-3.5 text-destructive shrink-0" />
+                          <span className="text-muted-foreground truncate">
+                            {req.dropLocation}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <Clock className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                          <span className="text-muted-foreground">
+                            {formatTime(req.scheduledTime)}
+                          </span>
+                        </div>
+                        <div className="pt-1 flex items-center justify-between">
+                          <span className="font-semibold text-primary">
+                            ₹{req.estimatedPrice.toString()}
+                          </span>
+                          <Button
+                            size="sm"
+                            onClick={() => handleAccept(req.id)}
+                            disabled={acceptRequest.isPending}
+                            data-ocid="driver.primary_button"
+                          >
+                            {acceptRequest.isPending ? (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            ) : (
+                              t("driver_accept")
+                            )}
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
               </div>
             )}
           </TabsContent>

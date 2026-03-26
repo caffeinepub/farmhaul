@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Leaf, LogIn, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, Leaf, LogIn, LogOut, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { UserRole } from "../backend.d";
 import { useAuth } from "../context/AuthContext";
@@ -62,6 +62,20 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
+          {profile && (
+            <Link
+              to="/dashboard"
+              className="px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors flex items-center gap-1.5"
+              activeProps={{
+                className:
+                  "px-3 py-2 rounded-lg text-sm font-medium text-primary bg-secondary flex items-center gap-1.5",
+              }}
+              data-ocid="nav.link"
+            >
+              <LayoutDashboard className="w-3.5 h-3.5" />
+              My History
+            </Link>
+          )}
         </div>
 
         {/* Actions */}
@@ -126,6 +140,17 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
+          {profile && (
+            <Link
+              to="/dashboard"
+              className="px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary flex items-center gap-1.5"
+              onClick={() => setMobileOpen(false)}
+              data-ocid="nav.link"
+            >
+              <LayoutDashboard className="w-3.5 h-3.5" />
+              My History
+            </Link>
+          )}
           <div className="flex gap-2 pt-2 border-t border-border mt-1">
             <Button
               variant="outline"

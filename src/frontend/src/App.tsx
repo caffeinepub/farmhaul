@@ -20,6 +20,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { StatsDashboard } from "./pages/StatsDashboard";
 import { TrackOrder } from "./pages/TrackOrder";
 import { TrackRedirect } from "./pages/TrackRedirect";
+import { UserDashboard } from "./pages/UserDashboard";
 
 // Root layout
 const rootRoute = createRootRoute({
@@ -74,6 +75,11 @@ const statsRoute = createRoute({
   path: "/stats",
   component: StatsDashboard,
 });
+const dashboardRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/dashboard",
+  component: UserDashboard,
+});
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -84,6 +90,7 @@ const routeTree = rootRoute.addChildren([
   trackRoute,
   trackOrderRoute,
   statsRoute,
+  dashboardRoute,
 ]);
 
 export const router = createRouter({ routeTree });

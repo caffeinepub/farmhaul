@@ -45,20 +45,32 @@ export const ChatMessage = IDL.Record({
   'message' : IDL.Text,
   'timestamp' : Time,
 });
+export const ActivityRecord = IDL.Record({
+  'id' : IDL.Nat,
+  'inputData' : IDL.Text,
+  'action' : IDL.Text,
+  'isFavorite' : IDL.Bool,
+  'outputData' : IDL.Text,
+  'timestamp' : Time,
+});
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'acceptRequest' : IDL.Func([IDL.Nat], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole__1], [], []),
+  'clearAllActivities' : IDL.Func([], [], []),
   'createTransportRequest' : IDL.Func(
       [IDL.Text, IDL.Nat, IDL.Text, IDL.Text, Time],
       [IDL.Nat],
       [],
     ),
+  'deleteActivity' : IDL.Func([IDL.Nat], [], []),
+  'deleteRequest' : IDL.Func([IDL.Nat], [], []),
   'getAllRequests' : IDL.Func([], [IDL.Vec(TransportRequest)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole__1], ['query']),
   'getMessages' : IDL.Func([IDL.Nat], [IDL.Vec(ChatMessage)], ['query']),
+  'getMyActivities' : IDL.Func([], [IDL.Vec(ActivityRecord)], ['query']),
   'getMyRequests' : IDL.Func([], [IDL.Vec(TransportRequest)], ['query']),
   'getStats' : IDL.Func(
       [],
@@ -73,16 +85,19 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'getTransportRequest' : IDL.Func([IDL.Nat], [TransportRequest], ['query']),
+  'getUserCreatedAt' : IDL.Func([], [Time], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'logActivity' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
   'registerUser' : IDL.Func([IDL.Text, UserRole], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'sendMessage' : IDL.Func([IDL.Nat, IDL.Text], [], []),
   'switchRole' : IDL.Func([UserRole], [], []),
+  'toggleFavorite' : IDL.Func([IDL.Nat], [], []),
   'updateDisplayName' : IDL.Func([IDL.Text], [], []),
   'updateRequestStatus' : IDL.Func([IDL.Nat, RequestStatus], [], []),
 });
@@ -124,20 +139,32 @@ export const idlFactory = ({ IDL }) => {
     'message' : IDL.Text,
     'timestamp' : Time,
   });
+  const ActivityRecord = IDL.Record({
+    'id' : IDL.Nat,
+    'inputData' : IDL.Text,
+    'action' : IDL.Text,
+    'isFavorite' : IDL.Bool,
+    'outputData' : IDL.Text,
+    'timestamp' : Time,
+  });
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'acceptRequest' : IDL.Func([IDL.Nat], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole__1], [], []),
+    'clearAllActivities' : IDL.Func([], [], []),
     'createTransportRequest' : IDL.Func(
         [IDL.Text, IDL.Nat, IDL.Text, IDL.Text, Time],
         [IDL.Nat],
         [],
       ),
+    'deleteActivity' : IDL.Func([IDL.Nat], [], []),
+    'deleteRequest' : IDL.Func([IDL.Nat], [], []),
     'getAllRequests' : IDL.Func([], [IDL.Vec(TransportRequest)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole__1], ['query']),
     'getMessages' : IDL.Func([IDL.Nat], [IDL.Vec(ChatMessage)], ['query']),
+    'getMyActivities' : IDL.Func([], [IDL.Vec(ActivityRecord)], ['query']),
     'getMyRequests' : IDL.Func([], [IDL.Vec(TransportRequest)], ['query']),
     'getStats' : IDL.Func(
         [],
@@ -152,16 +179,19 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'getTransportRequest' : IDL.Func([IDL.Nat], [TransportRequest], ['query']),
+    'getUserCreatedAt' : IDL.Func([], [Time], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'logActivity' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
     'registerUser' : IDL.Func([IDL.Text, UserRole], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'sendMessage' : IDL.Func([IDL.Nat, IDL.Text], [], []),
     'switchRole' : IDL.Func([UserRole], [], []),
+    'toggleFavorite' : IDL.Func([IDL.Nat], [], []),
     'updateDisplayName' : IDL.Func([IDL.Text], [], []),
     'updateRequestStatus' : IDL.Func([IDL.Nat, RequestStatus], [], []),
   });

@@ -102,6 +102,14 @@ export interface TransportRequest {
     pickupLocation: string;
 }
 export type Time = bigint;
+export interface ActivityRecord {
+    id: bigint;
+    inputData: string;
+    action: string;
+    isFavorite: boolean;
+    outputData: string;
+    timestamp: Time;
+}
 export interface ChatMessage {
     sender: Principal;
     message: string;
@@ -130,11 +138,15 @@ export interface backendInterface {
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
     acceptRequest(requestId: bigint): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole__1): Promise<void>;
+    clearAllActivities(): Promise<void>;
     createTransportRequest(cropType: string, quantityKg: bigint, pickupLocation: string, dropLocation: string, scheduledTime: Time): Promise<bigint>;
+    deleteActivity(id: bigint): Promise<void>;
+    deleteRequest(requestId: bigint): Promise<void>;
     getAllRequests(): Promise<Array<TransportRequest>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole__1>;
     getMessages(requestId: bigint): Promise<Array<ChatMessage>>;
+    getMyActivities(): Promise<Array<ActivityRecord>>;
     getMyRequests(): Promise<Array<TransportRequest>>;
     getStats(): Promise<{
         totalDrivers: bigint;
@@ -143,12 +155,15 @@ export interface backendInterface {
         totalFarmers: bigint;
     }>;
     getTransportRequest(requestId: bigint): Promise<TransportRequest>;
+    getUserCreatedAt(): Promise<Time>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
+    logActivity(action: string, inputData: string, outputData: string): Promise<void>;
     registerUser(displayName: string, role: UserRole): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     sendMessage(requestId: bigint, message: string): Promise<void>;
     switchRole(newRole: UserRole): Promise<void>;
+    toggleFavorite(id: bigint): Promise<void>;
     updateDisplayName(displayName: string): Promise<void>;
     updateRequestStatus(requestId: bigint, status: RequestStatus): Promise<void>;
 }
@@ -197,6 +212,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async clearAllActivities(): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.clearAllActivities();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.clearAllActivities();
+            return result;
+        }
+    }
     async createTransportRequest(arg0: string, arg1: bigint, arg2: string, arg3: string, arg4: Time): Promise<bigint> {
         if (this.processError) {
             try {
@@ -208,6 +237,34 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.createTransportRequest(arg0, arg1, arg2, arg3, arg4);
+            return result;
+        }
+    }
+    async deleteActivity(arg0: bigint): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteActivity(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteActivity(arg0);
+            return result;
+        }
+    }
+    async deleteRequest(arg0: bigint): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteRequest(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteRequest(arg0);
             return result;
         }
     }
@@ -267,6 +324,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getMyActivities(): Promise<Array<ActivityRecord>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getMyActivities();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getMyActivities();
+            return result;
+        }
+    }
     async getMyRequests(): Promise<Array<TransportRequest>> {
         if (this.processError) {
             try {
@@ -314,6 +385,20 @@ export class Backend implements backendInterface {
             return from_candid_TransportRequest_n4(this._uploadFile, this._downloadFile, result);
         }
     }
+    async getUserCreatedAt(): Promise<Time> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getUserCreatedAt();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getUserCreatedAt();
+            return result;
+        }
+    }
     async getUserProfile(arg0: Principal): Promise<UserProfile | null> {
         if (this.processError) {
             try {
@@ -339,6 +424,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.isCallerAdmin();
+            return result;
+        }
+    }
+    async logActivity(arg0: string, arg1: string, arg2: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.logActivity(arg0, arg1, arg2);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.logActivity(arg0, arg1, arg2);
             return result;
         }
     }
@@ -395,6 +494,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.switchRole(to_candid_UserRole_n16(this._uploadFile, this._downloadFile, arg0));
+            return result;
+        }
+    }
+    async toggleFavorite(arg0: bigint): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.toggleFavorite(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.toggleFavorite(arg0);
             return result;
         }
     }

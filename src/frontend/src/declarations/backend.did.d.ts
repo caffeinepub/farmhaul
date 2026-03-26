@@ -10,6 +10,14 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface ActivityRecord {
+  'id' : bigint,
+  'inputData' : string,
+  'action' : string,
+  'isFavorite' : boolean,
+  'outputData' : string,
+  'timestamp' : Time,
+}
 export interface ChatMessage {
   'sender' : Principal,
   'message' : string,
@@ -42,14 +50,18 @@ export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'acceptRequest' : ActorMethod<[bigint], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole__1], undefined>,
+  'clearAllActivities' : ActorMethod<[], undefined>,
   'createTransportRequest' : ActorMethod<
     [string, bigint, string, string, Time],
     bigint
   >,
+  'deleteActivity' : ActorMethod<[bigint], undefined>,
+  'deleteRequest' : ActorMethod<[bigint], undefined>,
   'getAllRequests' : ActorMethod<[], Array<TransportRequest>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole__1>,
   'getMessages' : ActorMethod<[bigint], Array<ChatMessage>>,
+  'getMyActivities' : ActorMethod<[], Array<ActivityRecord>>,
   'getMyRequests' : ActorMethod<[], Array<TransportRequest>>,
   'getStats' : ActorMethod<
     [],
@@ -61,12 +73,15 @@ export interface _SERVICE {
     }
   >,
   'getTransportRequest' : ActorMethod<[bigint], TransportRequest>,
+  'getUserCreatedAt' : ActorMethod<[], Time>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'logActivity' : ActorMethod<[string, string, string], undefined>,
   'registerUser' : ActorMethod<[string, UserRole], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'sendMessage' : ActorMethod<[bigint, string], undefined>,
   'switchRole' : ActorMethod<[UserRole], undefined>,
+  'toggleFavorite' : ActorMethod<[bigint], undefined>,
   'updateDisplayName' : ActorMethod<[string], undefined>,
   'updateRequestStatus' : ActorMethod<[bigint, RequestStatus], undefined>,
 }

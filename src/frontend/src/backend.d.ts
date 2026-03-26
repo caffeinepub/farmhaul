@@ -20,6 +20,14 @@ export interface TransportRequest {
     pickupLocation: string;
 }
 export type Time = bigint;
+export interface ActivityRecord {
+    id: bigint;
+    inputData: string;
+    action: string;
+    isFavorite: boolean;
+    outputData: string;
+    timestamp: Time;
+}
 export interface ChatMessage {
     sender: Principal;
     message: string;
@@ -47,12 +55,15 @@ export enum UserRole__1 {
 export interface backendInterface {
     acceptRequest(requestId: bigint): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole__1): Promise<void>;
+    clearAllActivities(): Promise<void>;
     createTransportRequest(cropType: string, quantityKg: bigint, pickupLocation: string, dropLocation: string, scheduledTime: Time): Promise<bigint>;
+    deleteActivity(id: bigint): Promise<void>;
     deleteRequest(requestId: bigint): Promise<void>;
     getAllRequests(): Promise<Array<TransportRequest>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole__1>;
     getMessages(requestId: bigint): Promise<Array<ChatMessage>>;
+    getMyActivities(): Promise<Array<ActivityRecord>>;
     getMyRequests(): Promise<Array<TransportRequest>>;
     getStats(): Promise<{
         totalDrivers: bigint;
@@ -61,12 +72,15 @@ export interface backendInterface {
         totalFarmers: bigint;
     }>;
     getTransportRequest(requestId: bigint): Promise<TransportRequest>;
+    getUserCreatedAt(): Promise<Time>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
+    logActivity(action: string, inputData: string, outputData: string): Promise<void>;
     registerUser(displayName: string, role: UserRole): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     sendMessage(requestId: bigint, message: string): Promise<void>;
     switchRole(newRole: UserRole): Promise<void>;
+    toggleFavorite(id: bigint): Promise<void>;
     updateDisplayName(displayName: string): Promise<void>;
     updateRequestStatus(requestId: bigint, status: RequestStatus): Promise<void>;
 }
