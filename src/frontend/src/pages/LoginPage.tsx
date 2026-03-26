@@ -51,8 +51,19 @@ export function LoginPage() {
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       if (msg.includes("already registered")) {
-        await refreshProfile();
-        navigate({ to: role === UserRole.farmer ? "/farmer" : "/driver" });
+        // Fetch the actual stored profile to navigate to the correct dashboard
+        try {
+          const existingProfile = await actor.getCallerUserProfile();
+          await refreshProfile();
+          if (existingProfile && existingProfile.role === UserRole.driver) {
+            navigate({ to: "/driver" });
+          } else {
+            navigate({ to: "/farmer" });
+          }
+        } catch {
+          await refreshProfile();
+          navigate({ to: "/farmer" });
+        }
       } else {
         toast.error("Registration failed. Please try again.");
         console.error(err);
@@ -169,6 +180,10 @@ export function LoginPage() {
                       </span>
                     </button>
                   </div>
+                  <p className="text-xs text-muted-foreground text-center pt-1">
+                    Already registered? Role selection is ignored — you will be
+                    taken to your existing dashboard.
+                  </p>
                 </div>
 
                 <Button
